@@ -1,0 +1,24 @@
+node('built-in') 
+{
+   stage('continousdownload')
+   {
+       git 'https://github.com/bairusrinivas/maven7.git'
+       } 
+  stage('continousbuild')
+   {
+       sh 'mvn package'
+   }
+   stage('continousdeploy')
+   {
+       sh 'scp /home/ubuntu/.jenkins/workspace/scpp/webapp/target/webapp.war ubuntu@172.31.31.220:/var/lib/tomcat9/webapps/qa.war'
+   }
+   stage('continoustesting')
+   {
+       git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+       sh 'java -jar  /home/ubuntu/.jenkins/workspace/scpp/testing.jar'
+   }
+    stage('continousdelivery')
+   {
+       sh 'scp /home/ubuntu/.jenkins/workspace/scpp/webapp/target/webapp.war ubuntu@172.31.18.68:/var/lib/tomcat9/webapps/prod.war'
+   }
+}
